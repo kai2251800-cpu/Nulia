@@ -25,87 +25,129 @@ end
 local function SetClipboardStr(str)
     if setclipboard then setclipboard(str)
     elseif toclipboard then toclipboard(str)
-    else SendNotification("Lỗi", "Executor của bạn không hỗ trợ copy link!") end
+    else SendNotification("Lỗi", "Executor không hỗ trợ copy!") end
 end
 
 -- ==========================================
--- 1. HỆ THỐNG KHỞI ĐỘNG (THÔNG BÁO & KEY)
+-- 1. HỆ THỐNG KHỞI ĐỘNG (FIX LỖI THÔNG BÁO)
 -- ==========================================
 local BlockScreen = Instance.new("Frame", ScreenGui)
 BlockScreen.Size = UDim2.new(1, 0, 1, 0)
-BlockScreen.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
-BlockScreen.Visible = false
+BlockScreen.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
+BlockScreen.BackgroundTransparency = 0.3
 BlockScreen.ZIndex = 999
 
--- Spinner kiểu Windows
+-- Bảng câu hỏi đầu tiên
+local AskFrame = Instance.new("Frame", BlockScreen)
+AskFrame.Size = UDim2.new(0, 320, 0, 150)
+AskFrame.Position = UDim2.new(0.5, -160, 0.5, -75)
+AskFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+AskFrame.ZIndex = 1000
+Instance.new("UICorner", AskFrame)
+
+local AskTitle = Instance.new("TextLabel", AskFrame)
+AskTitle.Size = UDim2.new(1, 0, 0, 45)
+AskTitle.BackgroundTransparency = 1
+AskTitle.Text = "Bạn có muốn kích hoạt script không?"
+AskTitle.TextColor3 = Color3.new(1,1,1)
+AskTitle.Font = Enum.Font.GothamBold
+AskTitle.TextSize = 15
+AskTitle.ZIndex = 1001
+
+local YesBtn = Instance.new("TextButton", AskFrame)
+YesBtn.Size = UDim2.new(0.4, 0, 0, 40)
+YesBtn.Position = UDim2.new(0.07, 0, 0.6, 0)
+YesBtn.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
+YesBtn.Text = "Có ✅"
+YesBtn.TextColor3 = Color3.new(1,1,1)
+YesBtn.Font = Enum.Font.GothamBold
+YesBtn.ZIndex = 1001
+Instance.new("UICorner", YesBtn)
+
+local NoBtn = Instance.new("TextButton", AskFrame)
+NoBtn.Size = UDim2.new(0.4, 0, 0, 40)
+NoBtn.Position = UDim2.new(0.53, 0, 0.6, 0)
+NoBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+NoBtn.Text = "Không ❌"
+NoBtn.TextColor3 = Color3.new(1,1,1)
+NoBtn.Font = Enum.Font.GothamBold
+NoBtn.ZIndex = 1001
+Instance.new("UICorner", NoBtn)
+
+-- Spinner vòng tròn Windows
 local Spinner = Instance.new("ImageLabel", BlockScreen)
-Spinner.Size = UDim2.new(0, 80, 0, 80)
-Spinner.Position = UDim2.new(0.5, -40, 0.4, -40)
+Spinner.Size = UDim2.new(0, 70, 0, 70)
+Spinner.Position = UDim2.new(0.5, -35, 0.45, -35)
 Spinner.BackgroundTransparency = 1
-Spinner.Image = "rbxassetid://3587322965" -- Icon vòng tròn
+Spinner.Image = "rbxassetid://3587322965"
 Spinner.Visible = false
-Spinner.ZIndex = 1000
+Spinner.ZIndex = 1002
 
 -- Bảng nhập Key
 local KeyFrame = Instance.new("Frame", BlockScreen)
-KeyFrame.Size = UDim2.new(0, 300, 0, 150)
-KeyFrame.Position = UDim2.new(0.5, -150, 0.5, -75)
+KeyFrame.Size = UDim2.new(0, 320, 0, 180)
+KeyFrame.Position = UDim2.new(0.5, -160, 0.5, -90)
 KeyFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 KeyFrame.Visible = false
-KeyFrame.ZIndex = 1001
+KeyFrame.ZIndex = 1003
 Instance.new("UICorner", KeyFrame)
 
 local KeyTitle = Instance.new("TextLabel", KeyFrame)
-KeyTitle.Size = UDim2.new(1, 0, 0, 40)
+KeyTitle.Size = UDim2.new(1, 0, 0, 35)
 KeyTitle.BackgroundTransparency = 1
 KeyTitle.Text = "Vui lòng nhập key:"
 KeyTitle.TextColor3 = Color3.new(1,1,1)
 KeyTitle.Font = Enum.Font.GothamBold
-KeyTitle.TextSize = 16
+KeyTitle.TextSize = 15
+KeyTitle.ZIndex = 1004
 
 local KeyInput = Instance.new("TextBox", KeyFrame)
-KeyInput.Size = UDim2.new(0.8, 0, 0, 30)
-KeyInput.Position = UDim2.new(0.1, 0, 0.35, 0)
+KeyInput.Size = UDim2.new(0.85, 0, 0, 35)
+KeyInput.Position = UDim2.new(0.075, 0, 0.3, 0)
 KeyInput.PlaceholderText = "Nhập key tại đây..."
 KeyInput.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 KeyInput.TextColor3 = Color3.new(1,1,1)
 KeyInput.Font = Enum.Font.Gotham
+KeyInput.ZIndex = 1004
 Instance.new("UICorner", KeyInput)
 
 local CancelBtn = Instance.new("TextButton", KeyFrame)
-CancelBtn.Size = UDim2.new(0.35, 0, 0, 35)
-CancelBtn.Position = UDim2.new(0.1, 0, 0.65, 0)
-CancelBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+CancelBtn.Size = UDim2.new(0.4, 0, 0, 35)
+CancelBtn.Position = UDim2.new(0.075, 0, 0.65, 0)
+CancelBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
 CancelBtn.Text = "Hủy ❌"
 CancelBtn.TextColor3 = Color3.new(1,1,1)
 CancelBtn.Font = Enum.Font.GothamBold
+CancelBtn.ZIndex = 1004
 Instance.new("UICorner", CancelBtn)
 
 local GetKeyBtn = Instance.new("TextButton", KeyFrame)
-GetKeyBtn.Size = UDim2.new(0.35, 0, 0, 35)
-GetKeyBtn.Position = UDim2.new(0.55, 0, 0.65, 0)
+GetKeyBtn.Size = UDim2.new(0.4, 0, 0, 35)
+GetKeyBtn.Position = UDim2.new(0.525, 0, 0.65, 0)
 GetKeyBtn.BackgroundColor3 = Color3.fromRGB(0, 150, 255)
 GetKeyBtn.Text = "Lấy link 🔑"
 GetKeyBtn.TextColor3 = Color3.new(1,1,1)
 GetKeyBtn.Font = Enum.Font.GothamBold
+GetKeyBtn.ZIndex = 1004
 Instance.new("UICorner", GetKeyBtn)
 
 local CheckBtn = Instance.new("TextButton", KeyFrame)
-CheckBtn.Size = UDim2.new(0.8, 0, 0, 25)
-CheckBtn.Position = UDim2.new(0.1, 0, 0.95, 0)
+CheckBtn.Size = UDim2.new(0.85, 0, 0, 25)
+CheckBtn.Position = UDim2.new(0.075, 0, 0.85, 0)
 CheckBtn.BackgroundColor3 = Color3.fromRGB(50, 200, 50)
 CheckBtn.Text = "Kiểm tra Key"
 CheckBtn.TextColor3 = Color3.new(1,1,1)
 CheckBtn.Font = Enum.Font.GothamBold
+CheckBtn.ZIndex = 1004
 Instance.new("UICorner", CheckBtn)
 
 -- Bảng Loading Check Key
 local LoadFrame = Instance.new("Frame", BlockScreen)
-LoadFrame.Size = UDim2.new(0, 300, 0, 100)
-LoadFrame.Position = UDim2.new(0.5, -150, 0.5, -50)
+LoadFrame.Size = UDim2.new(0, 300, 0, 110)
+LoadFrame.Position = UDim2.new(0.5, -150, 0.5, -55)
 LoadFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 LoadFrame.Visible = false
-LoadFrame.ZIndex = 1001
+LoadFrame.ZIndex = 1005
 Instance.new("UICorner", LoadFrame)
 
 local LoadTxt = Instance.new("TextLabel", LoadFrame)
@@ -114,17 +156,20 @@ LoadTxt.BackgroundTransparency = 1
 LoadTxt.Text = "Đang kiểm tra Key🔑"
 LoadTxt.TextColor3 = Color3.new(1,1,1)
 LoadTxt.Font = Enum.Font.GothamBold
-LoadTxt.TextSize = 16
+LoadTxt.TextSize = 15
+LoadTxt.ZIndex = 1006
 
 local LoadBarBG = Instance.new("Frame", LoadFrame)
-LoadBarBG.Size = UDim2.new(0.8, 0, 0, 15)
+LoadBarBG.Size = UDim2.new(0.8, 0, 0, 12)
 LoadBarBG.Position = UDim2.new(0.1, 0, 0.5, 0)
 LoadBarBG.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+LoadBarBG.ZIndex = 1006
 Instance.new("UICorner", LoadBarBG)
 
 local LoadBarFill = Instance.new("Frame", LoadBarBG)
 LoadBarFill.Size = UDim2.new(0, 0, 1, 0)
 LoadBarFill.BackgroundColor3 = Color3.fromRGB(0, 255, 100)
+LoadBarFill.ZIndex = 1007
 Instance.new("UICorner", LoadBarFill)
 
 local LoadPercent = Instance.new("TextLabel", LoadFrame)
@@ -134,6 +179,7 @@ LoadPercent.BackgroundTransparency = 1
 LoadPercent.Text = "0%"
 LoadPercent.TextColor3 = Color3.new(1,1,1)
 LoadPercent.Font = Enum.Font.GothamBold
+LoadPercent.ZIndex = 1006
 
 -- Toggle Button (Biểu tượng 🎱, di chuyển được)
 local ToggleButton = Instance.new("TextButton", ScreenGui)
@@ -147,34 +193,25 @@ ToggleButton.Active = true
 ToggleButton.Draggable = true
 Instance.new("UICorner", ToggleButton).CornerRadius = UDim.new(1, 0)
 
--- Logic Khởi Động
-local bindable = Instance.new("BindableFunction")
-bindable.OnInvoke = function(response)
-    if response == "Có✅" then
-        BlockScreen.Visible = true
-        Spinner.Visible = true
-        local spinAnim = RunService.RenderStepped:Connect(function() Spinner.Rotation = Spinner.Rotation + 5 end)
-        task.wait(2)
-        spinAnim:Disconnect()
-        Spinner.Visible = false
-        KeyFrame.Visible = true
-    end
-end
-
-task.spawn(function()
-    pcall(function()
-        StarterGui:SetCore("SendNotification", {
-            Title = "Faster Hub V5",
-            Text = "Bạn có muốn kích hoạt scirpt không?",
-            Duration = 10,
-            Button1 = "Có✅",
-            Button2 = "Không ❌",
-            Callback = bindable
-        })
-    end)
+-- Xử lý sự kiện bấm nút khởi động
+NoBtn.MouseButton1Click:Connect(function()
+    BlockScreen:Destroy()
 end)
 
-CancelBtn.MouseButton1Click:Connect(function() BlockScreen.Visible = false end)
+YesBtn.MouseButton1Click:Connect(function()
+    AskFrame.Visible = false
+    Spinner.Visible = true
+    local spinAnim = RunService.RenderStepped:Connect(function() Spinner.Rotation = Spinner.Rotation + 6 end)
+    task.wait(1.5)
+    spinAnim:Disconnect()
+    Spinner.Visible = false
+    KeyFrame.Visible = true
+end)
+
+CancelBtn.MouseButton1Click:Connect(function()
+    BlockScreen:Destroy()
+end)
+
 GetKeyBtn.MouseButton1Click:Connect(function() 
     SetClipboardStr("https://sites.google.com/view/faterhub-key/trang-ch%E1%BB%A7")
     SendNotification("Thành công", "Đã copy link lấy Key!")
@@ -187,18 +224,18 @@ CheckBtn.MouseButton1Click:Connect(function()
         for i = 0, 100 do
             LoadPercent.Text = i .. "%"
             LoadBarFill.Size = UDim2.new(i/100, 0, 1, 0)
-            task.wait(0.02)
+            task.wait(0.015)
         end
         SendNotification("Faster Hub", "Đã thành công kích hoạt key🔑✅")
         BlockScreen:Destroy()
         ToggleButton.Visible = true
     else
-        SendNotification("Thất bại", "Key sai hoặc đã cũ!")
+        SendNotification("Thất bại", "Key sai! Key mới là: FasterHub_SuperVip")
     end
 end)
 
 -- ==========================================
--- 2. GIAO DIỆN HUB CHÍNH V5
+-- 2. GIAO DIỆN HUB CHÍNH V5 (ĐẦY ĐỦ CÁC TAB)
 -- ==========================================
 local MainFrame = Instance.new("Frame", ScreenGui)
 MainFrame.Size = UDim2.new(0, 420, 0, 480)
@@ -335,7 +372,7 @@ local function RegisterToggle(btn, stateKey, callback)
 end
 
 -- ==========================================
--- 3. CÁC TÍNH NĂNG VÀ LOGIC
+-- 3. CÁC TÍNH NĂNG HOẠT ĐỘNG
 -- ==========================================
 
 -- TAB HOME
@@ -361,7 +398,7 @@ Instance.new("UICorner", AutoClickCircle).CornerRadius = UDim.new(1,0)
 
 RegisterToggle(acBtn, "AutoClick", function(v) AutoClickCircle.Visible = v end)
 
--- TAB ĐỊNH VỊ & BAY (Khôi phục ESP & Fly Mobile)
+-- TAB ĐỊNH VỊ & BAY
 local espBtn, _ = CreateToggle(Pages.ESP_Fly, "Định Vị (ESP)")
 local currentESPColor = Color3.new(0,1,0)
 local function UpdateESP()
@@ -428,7 +465,7 @@ local spawnPoint = Vector3.new(0, 50, 0)
 RegisterToggle(antivoidBtn, "AntiVoid", function(v) if v and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then spawnPoint = LocalPlayer.Character.HumanoidRootPart.Position end end)
 
 -- TAB AURA & FX
-local rainbowSkinBtn, _ = CreateToggle(Pages.Aura, "Rainbow Skin (Toàn Nhân Vật)")
+local rainbowSkinBtn, _ = CreateToggle(Pages.Aura, "Rainbow Skin")
 local fireBtn, _ = CreateToggle(Pages.Aura, "Fire Aura")
 local smokeBtn, _ = CreateToggle(Pages.Aura, "Smoke Aura")
 local lightBtn, _ = CreateToggle(Pages.Aura, "Lighting Aura")
@@ -476,7 +513,7 @@ local function SetAnim(pack)
     if pack == "Zombie" then
         if anim:FindFirstChild("idle") then anim.idle.Animation1.AnimationId = "rbxassetid://313026115" end
         if anim:FindFirstChild("walk") then anim.walk.WalkAnim.AnimationId = "rbxassetid://313032534" end
-     if anim:FindFirstChild("run") then anim.run.RunAnim.AnimationId = "rbxassetid://313029472" end
+        if anim:FindFirstChild("run") then anim.run.RunAnim.AnimationId = "rbxassetid://313029472" end
         if anim:FindFirstChild("jump") then anim.jump.JumpAnim.AnimationId = "rbxassetid://313028739" end
     elseif pack == "Ninja" then
         if anim:FindFirstChild("idle") then anim.idle.Animation1.AnimationId = "rbxassetid://656117400" end
@@ -545,12 +582,12 @@ CreateButton(Pages.Shader, "📽️ Đổ Bóng (4K Cinematic)", function()
     Lighting.GlobalShadows = true Lighting.Brightness = 3 Lighting.ClockTime = 14
     local cc = Instance.new("ColorCorrectionEffect", Lighting) cc.Saturation = 0.2 cc.Contrast = 0.4
 end)
-CreateButton(Pages.Shader, "⚡ Đồ Hoạ Nhanh (Mượt Cực Độ)", function()
+CreateButton(Pages.Shader, "⚡ Đồ Hoạ Nhanh", function()
     ClearShaders()
     Lighting.GlobalShadows = false
     for _, p in pairs(workspace:GetDescendants()) do if p:IsA("BasePart") then p.CastShadow = false end end
 end)
-CreateButton(Pages.Shader, "🔄 Tắt Hết Đồ Hoạ (Mặc Định)", function()
+CreateButton(Pages.Shader, "🔄 Tắt Hết Đồ Hoạ", function()
     ClearShaders() Lighting.ClockTime = 14 Lighting.Ambient = Color3.fromRGB(127,127,127) Lighting.OutdoorAmbient = Color3.fromRGB(127,127,127) Lighting.GlobalShadows = true Lighting.FogEnd = 100000
     if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") and LocalPlayer.Character.HumanoidRootPart:FindFirstChild("DarkLight") then LocalPlayer.Character.HumanoidRootPart.DarkLight:Destroy() end
 end)
@@ -579,9 +616,7 @@ Pages.Aura.CanvasSize = UDim2.new(0, 0, 0, 350)
 Pages.Anim.CanvasSize = UDim2.new(0, 0, 0, 450)
 Pages.Shader.CanvasSize = UDim2.new(0, 0, 0, 350)
 Pages.Set.CanvasSize = UDim2.new(0, 0, 0, 250)
--- ==========================================
--- VÒNG LẶP XỬ LÝ CHUNG
--- ==========================================
+-- VÒNG LẶP XỬ LÝ
 local SpinForce, hue = nil, 0
 RunService.Stepped:Connect(function(dt)
     hue = (hue + dt * 0.3) % 1
@@ -594,7 +629,6 @@ RunService.Stepped:Connect(function(dt)
     if states.WS and hum then hum.WalkSpeed = tonumber(wsBox.Text) or 16 end
     if states.JP and hum then hum.JumpPower = tonumber(jpBox.Text) or 50 hum.UseJumpPower = true end
     if states.NC then for _, part in pairs(char:GetDescendants()) do if part:IsA("BasePart") then part.CanCollide = false end end end
-    
     if states.AutoClick and AutoClickCircle.Visible then VirtualUser:ClickButton1(Vector2.new(0,0)) end
     
     if states.Fling and hrp then
@@ -619,6 +653,7 @@ RunService.Stepped:Connect(function(dt)
         NameTag:FindFirstChildOfClass("TextLabel").TextColor3 = Color3.fromHSV(hue, 1, 1)
     end
 end)
+
 UserInputService.JumpRequest:Connect(function()
     if states.WallClimb then
         local char = LocalPlayer.Character
